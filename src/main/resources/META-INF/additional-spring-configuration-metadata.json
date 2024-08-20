@@ -1,0 +1,19 @@
+{
+    "properties": [
+        {
+            "name": "okta.api.token",
+            "type": "java.lang.String",
+            "description": "Okta API 토큰"
+        },
+        {
+            "name": "okta.api.base-url",
+            "type": "java.lang.String",
+            "description": "Okta API Base Url"
+        },
+        {
+            "name": "keycloak.api.base-url",
+            "type": "java.lang.String",
+            "description": "Keycloak API Base Url"
+        }
+    ]
+}
