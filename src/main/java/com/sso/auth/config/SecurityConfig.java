@@ -18,39 +18,39 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
             ClientRegistrationRepository clientRegistrationRepository) throws Exception {
 
-                http
-                        .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/dashboard", "/dashboardkc").authenticated()
-                .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2Login ->
-                        oauth2Login
-                        .loginPage("/login")
-                        .successHandler((request, response, authentication) -> {
+        http
+        .authorizeHttpRequests(authorize -> 
+            authorize
+            .requestMatchers("/login").permitAll()
+            .requestMatchers("/dashboard", "/dashboardkc").authenticated()
+            .anyRequest().authenticated()
+        )
+        .oauth2Login(oauth2Login ->
+            oauth2Login
+            .loginPage("/login")
+            .successHandler((request, response, authentication) -> {
 
-                            String url = request.getRequestURL().toString();
-                                    if (url.equals("http://192.168.0.59:18081/login/oauth2/code/okta")) {
-                                        response.sendRedirect("/dashboard");
-                                    } else if (url.equals("http://192.168.0.59:18081/login/oauth2/code/keycloak")) {
-                                        response.sendRedirect("/dashboardkc");
-                                    }
-                        }
-                        
-                                )
-                                .failureHandler((request, response, exception) -> {
-                        System.err.println(exception.getMessage());
-                    })
-                    .userInfoEndpoint()
-                    .oidcUserService(this.oidcUserService())
-                )
-                .logout(oauth2Logout -> 
-                oauth2Logout
-                .logoutUrl("/logout")
-                .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID"));
+                String url = request.getRequestURL().toString();
+                if (url.equals("http://192.168.0.59:18081/login/oauth2/code/okta")) {
+                    response.sendRedirect("/dashboard");
+                } else if (url.equals("http://192.168.0.59:18081/login/oauth2/code/keycloak")) {
+                    response.sendRedirect("/dashboardkc");
+                }
+            })
+            .failureHandler((request, response, exception) -> {
+                System.err.println(exception.getMessage());
+            })
+            .userInfoEndpoint()
+            .oidcUserService(this.oidcUserService())
+        )
+        .logout(oauth2Logout -> 
+            oauth2Logout
+            .logoutUrl("/logout")
+            .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository))
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID"));
+            
         return http.build();
     }
 
@@ -58,14 +58,11 @@ public class SecurityConfig{
     public OidcUserService oidcUserService() {
         OidcUserService delegate = new OidcUserService();
 
-
-
         return delegate;
     }
     
     private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
-        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(
-                clientRegistrationRepository);
+        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
 
         oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://192.168.0.59:18081");
         

@@ -50,7 +50,7 @@ public class KeycloakService {
 
                     accessToken = jsonNode.get("access_token").asText();
                 } else {
-                    System.out.println(statusCode);
+                    System.out.println("Failed get Token. StatusCode : " + statusCode);
                 }
             } 
         } catch (Exception e) {
@@ -63,6 +63,7 @@ public class KeycloakService {
     public String getUserApplications(String userId, String accessToken) {
         String applications = "";
 
+        System.out.println(apiBaseUrl);
         String url = apiBaseUrl + "/myrealm/users/" + userId + "/role-mappings";
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -78,7 +79,7 @@ public class KeycloakService {
                     JsonNode clientMappings = jsonNode.path("clientMappings");
                     applications = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(clientMappings);
                 } else {
-                    System.out.println(statusCode);
+                    System.out.println("Failed get applications. StatusCode : " + statusCode);
                 }
             }
         } catch (Exception e) {
@@ -106,7 +107,7 @@ public class KeycloakService {
                         JsonNode jsonNode = mapper.readTree(responseBody);
                         infos.add(jsonNode);
                     } else {
-                        System.out.println(statusCode);
+                        System.out.println("Failed get ClientsInfo. StatusCode : " + statusCode);
                     }
                 }
             } catch (Exception e) {
